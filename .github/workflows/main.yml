@@ -2,8 +2,8 @@ name: MathonGo Telegram Bot
 
 on:
   schedule:
-    - cron: '*/2 * * * *'  # Every 2 minutes
-  workflow_dispatch:  # Manual trigger
+    - cron: '*/2 * * * *'
+  workflow_dispatch:
 
 jobs:
   run-bot:
@@ -22,21 +22,26 @@ jobs:
         run: pip install requests beautifulsoup4 lxml
       
       - name: Restore last update ID
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: last_update_id.txt
-          key: last-update-id-${{ github.run_id }}
-          restore-keys: |
-            last-update-id-
+          key: telegram-bot-last-update-id
       
       - name: Run bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: python bot.py
       
+      - name: Delete old cache
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh cache delete telegram-bot-last-update-id --repo ${{ github.repository }} || true
+      
       - name: Save last update ID
         uses: actions/cache/save@v4
         if: always()
         with:
           path: last_update_id.txt
-          key: last-update-id-${{ github.run_id }}
+          key: telegram-bot-last-update-id
