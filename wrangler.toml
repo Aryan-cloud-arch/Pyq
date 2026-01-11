@@ -1,0 +1,6 @@
+name = "mathongo-pdf-bot"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+BOT_TOKEN = "8353748222:AAEOi8hzL_UCRpvbD2gJPaoNJurxc4iovl0"
